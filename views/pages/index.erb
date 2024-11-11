@@ -6,7 +6,7 @@
             <span> <%=item['category']%> </span>
             <p> <%=item['description']%> </p>
             <% if item['deadline'] != nil%>
-            <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.parse(DateTime.now.to_s.split("+")[0]))%> </p>
+            <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.parse(DateTime.now.to_s.split("+")[0]))%> left </p>
             <%end%>
         </div>
     <% end %>

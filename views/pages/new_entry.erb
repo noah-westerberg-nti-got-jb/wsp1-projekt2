@@ -7,8 +7,8 @@
             <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
         <div>
             <span>category</span>
-            <button>+</button>
-            <select name="category">
+            <button type="button" id="new-category">+</button>
+            <select id="category_selection" name="category">
                 <% @categories.each do | list |%>
                     <option><%= list['category'] %></option>
                 <% end %>
@@ -17,5 +17,17 @@
         <div><span>Importance</span><input type="range" value="3" min="1" max="5" step="1" name="importance"></div>
 
         <button type="submit"> NEW </button>
-    <div>
+    </div>
 </form>
+
+<script type="text/javascript">
+    document.querySelector("#new-category").addEventListener('click', () => {
+        category_selection = document.querySelector("#category_selection");
+        
+        category_text = document.createElement("input");
+        category_text.setAttribute("type", "text");
+        category_text.setAttribute("name", "category");
+
+        category_selection.replaceWith(category_text);
+    });
+</script>
