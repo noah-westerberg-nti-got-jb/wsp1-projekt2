@@ -22,3 +22,21 @@ nav *{
   border: solid rgb(138, 138, 138);
   background: rgb(203, 203, 203);
 }
+
+#list-container{
+  display: flex;
+  flex-direction: row;
+  background: rgb(227, 188, 98);
+  padding: 10px;
+  flex-wrap: wrap;
+
+  min-height: 70vh;
+}
+
+
+.todo-container{
+  background: rgb(104, 162, 244);
+  margin: 15px;
+  width: 250px;
+  height: 350px;
+}

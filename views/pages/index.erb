@@ -1,0 +1,13 @@
+<div id="list-container">
+    <% @todo.each do | item | %>
+        <div class="todo-container">
+            <h2> <%=item['title']%> </h2>
+            <span> <%=item['importance']%> </span>
+            <span> <%=item['category']%> </span>
+            <p> <%=item['description']%> </p>
+            <% if item['deadline'] != nil%>
+            <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.parse(DateTime.now.to_s.split("+")[0]))%> </p>
+            <%end%>
+        </div>
+    <% end %>
+</div>
