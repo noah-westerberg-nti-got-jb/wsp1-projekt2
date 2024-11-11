@@ -1,0 +1,21 @@
+<form action="/new" method="post">
+    <div id="creation-form">
+        <div><span>Title</span><input type="text" name="title"></div>
+        <div><span>Description</span><input type="text" name="description"></div>
+        <div><span>Deadline</span>
+            <input type="checkbox" name="has_deadline">
+            <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
+        <div>
+            <span>category</span>
+            <button>+</button>
+            <select name="category">
+                <% @categories.each do | list |%>
+                    <option><%= list['category'] %></option>
+                <% end %>
+            </select> 
+        </div>
+        <div><span>Importance</span><input type="range" value="3" min="1" max="5" step="1" name="importance"></div>
+
+        <button type="submit"> NEW </button>
+    <div>
+</form>

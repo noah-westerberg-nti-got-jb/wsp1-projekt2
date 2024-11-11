@@ -5,3 +5,20 @@ body {
   font-size: x-large;
   margin: 1em;
 }
+
+nav {
+  display: flex;
+  flex-direction: row;
+  margin: 15px 5px;
+}
+
+nav *{
+  margin: 0px 10px;
+}
+
+#creation-form{
+  display: flex;
+  flex-direction: column;
+  border: solid rgb(138, 138, 138);
+  background: rgb(203, 203, 203);
+}
