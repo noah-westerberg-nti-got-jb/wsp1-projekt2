@@ -17,9 +17,6 @@ class App < Sinatra::Base
             difference = time1 - time2
             difference_seconds = (difference.to_f * 86400).abs
             
-            p time1
-            p time2
-            p difference_seconds
             end_s = ""
 
             if difference_seconds < 60
@@ -77,11 +74,41 @@ class App < Sinatra::Base
         creationDate = DateTime.now.to_s.split('+')[0].sub!("T", " ")
 
         values = [title, description, deadline, category, importance, creationDate]
-        p "values #{values}"
         
         db.execute('INSERT INTO todoList (title, description, deadline, category, importance, creationDate) VALUES (?,?,?,?,?,?)', values)
 
         redirect("/")
     end
 
+    get '/edit/:id' do | id |
+      @item = db.execute('SELECT * FROM todoList WHERE id = ?;', [id])[0]
+      @categories = db.execute('SELECT DISTINCT category FROM todoList')
+
+      p @item['deadline']
+        
+      erb(:"pages/edit-item")
+    end
+    
+    post '/edit/:id' do | id |
+        title = params['title']
+        description = params['description']
+        if params['has_deadline']
+            deadline = params['deadline'].split("+")[0].sub!("T", " ")
+        else
+            deadline = nil
+        end
+        category = params['category']
+        importance = params['importance']
+
+        values = [title, description, deadline, category, importance, id]
+
+        db.execute("UPDATE todoList SET title=?, description=?, deadline=?, category=?, importance=? WHERE id = ?", values)
+
+        redirect("/")
+    end
+
+    get '/delete/:id' do | id |
+        db.execute("DELETE FROM todoList WHERE id = ?", [id])
+        redirect("/")
+    end
 end

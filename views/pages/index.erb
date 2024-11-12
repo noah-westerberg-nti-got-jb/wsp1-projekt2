@@ -5,9 +5,10 @@
             <span> <%=item['importance']%> </span>
             <span> <%=item['category']%> </span>
             <p> <%=item['description']%> </p>
-            <% if item['deadline'] != nil%>
+            <%if item['deadline'] != nil%>
             <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.parse(DateTime.now.to_s.split("+")[0]))%> left </p>
             <%end%>
+            <button type="button" id="edit-item" onclick=<%="location.href='/edit/#{item['id']}'"%>>edit</button>
         </div>
     <% end %>
 </div>

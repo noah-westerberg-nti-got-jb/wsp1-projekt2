@@ -39,4 +39,29 @@ nav *{
   margin: 15px;
   width: 250px;
   height: 350px;
+  position: relative;
+  padding: 5px;
+}
+
+#edit-item {
+  position: absolute;
+
+  right: 5%;
+  bottom: 3%;
+}
+
+#delete-item {
+  color: whitesmoke;
+  background-color: rgb(255, 0, 0);
+}
+
+#form-button-container {
+  display: flex;
+  flex-direction: row;
+  margin: 0 10px;
+}
+
+#form-button-container * {
+  width: 100%;
+  border: solid black 1px;
 }

@@ -1,0 +1,45 @@
+<%p @item%>
+<form action=<%="/edit/#{@item['id'].to_s}"%> method="post">
+    <div id="creation-form">
+        <div><span>Title</span><input type="text" name="title" value="<%=@item['title']%>"></div>
+        <div><span>Description</span><input type="text" name="description" value="<%=@item['description']%>"></div>
+        <div><span>Deadline</span>
+            <%if @item['deadline'] != nil%>
+                <input type="checkbox" name="has_deadline" checked="true">
+                <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>" value="<%=DateTime.parse(@item['deadline']).to_s.split("+")[0]%>"></div>
+            <%else%>
+                <input type="checkbox" name="has_deadline">
+                <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
+            <%end%>
+        <div>
+            <span>category</span>
+            <button type="button" id="new-category">+</button>
+            <select id="category_selection" name="category" value="">
+                <% @categories.each do | list |%>
+                    <option
+                    <%if @item['category'] == list['category']%>
+                        selected="selected"
+                    <%end%>>
+                    <%= list['category'] %></option>
+                <% end %>
+            </select> 
+        </div>
+        <div><span>Importance</span><input type="range" value="<%=@item['importance']%>" min="1" max="5" step="1" name="importance"></div>
+        <div id="form-button-container">
+        <button type="submit"> Confirm Change </button>
+        <button type="button" id="delete-item" onclick=<%="location.href='/delete/#{@item['id']}'"%>>delete</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    document.querySelector("#new-category").addEventListener('click', () => {
+        category_selection = document.querySelector("#category_selection");
+        
+        category_text = document.createElement("input");
+        category_text.setAttribute("type", "text");
+        category_text.setAttribute("name", "category");
+
+        category_selection.replaceWith(category_text);
+    });
+</script>
