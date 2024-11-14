@@ -9,7 +9,7 @@ class App < Sinatra::Base
     end
     
     get '/' do
-        @todo = db.execute("SELECT * FROM todoList")
+        @todo = db.execute("SELECT * FROM todoList WHERE completionDate IS NULL")
 
         # time1 - time2
         # returns: string; either: seconds, minuts, houres, days, weeks, months, years between the two times
@@ -65,7 +65,7 @@ class App < Sinatra::Base
         title = params['title']
         description = params['description']
         if params['has_deadline']
-            deadline = params['deadline'].split("+")[0].sub!("T", " ")
+            deadline = params['deadline'].sub!("T", " ")
         else
             deadline = nil
         end
@@ -93,7 +93,7 @@ class App < Sinatra::Base
         title = params['title']
         description = params['description']
         if params['has_deadline']
-            deadline = params['deadline'].split("+")[0].sub!("T", " ")
+            deadline = params['deadline'].sub!("T", " ")
         else
             deadline = nil
         end
@@ -111,4 +111,11 @@ class App < Sinatra::Base
         db.execute("DELETE FROM todoList WHERE id = ?", [id])
         redirect("/")
     end
-end
+
+    get '/complete/:id' do | id |
+        time = DateTime.now.to_s.sub!("T", " ")
+        db.execute('UPDATE todoList SET completionDate = ? WHERE id = ?', [time, id])
+
+        redirect("/")
+    end
+ end

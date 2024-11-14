@@ -6,9 +6,10 @@
             <span> <%=item['category']%> </span>
             <p> <%=item['description']%> </p>
             <%if item['deadline'] != nil%>
-            <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.parse(DateTime.now.to_s.split("+")[0]))%> left </p>
+            <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
             <%end%>
             <button type="button" id="edit-item" onclick=<%="location.href='/edit/#{item['id']}'"%>>edit</button>
+            <button type="button" id="complete-task" onclick=<%="location.href='/complete/#{item['id']}'"%>>Complete</button>
         </div>
     <% end %>
 </div>
