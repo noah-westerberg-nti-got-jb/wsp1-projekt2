@@ -9,7 +9,31 @@ class App < Sinatra::Base
     end
     
     get '/' do
-        @todo = db.execute("SELECT * FROM todoList WHERE completionDate IS NULL")
+        sort_option = ""
+        sort = params['sort']
+        if sort == "[none]"
+          sort_option = "";
+        elsif sort == "Deadline (High - Low)"
+            sort_option = "ORDER BY deadline DESC"
+        elsif sort == "Deadline (Low - High)"
+            sort_option = "ORDER BY deadline ASC"
+        elsif sort == "Importance (High - Low)"
+            sort_option = "ORDER BY importance DESC"
+        elsif sort == "Importance (Low - High)"
+            sort_option = "ORDER BY importance ASC"
+        end
+
+        show_option = ""
+        show = params['show']
+        if show == "" || show == "Uncompleted"
+            show_option = "WHERE completionDate IS NULL"
+        elsif show == "Completed"
+            show_option = "WHERE completionDate IS NOT NULL"
+        elsif show == "All"
+            show_option = ""
+        end
+
+        @todo = db.execute("SELECT * FROM todoList #{show_option} #{sort_option}")
 
         # returns: string; either: seconds, minuts, houres, days, weeks, months, or years between the two times
         def time_difference(time1, time2)
