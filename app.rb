@@ -11,8 +11,7 @@ class App < Sinatra::Base
     get '/' do
         @todo = db.execute("SELECT * FROM todoList WHERE completionDate IS NULL")
 
-        # time1 - time2
-        # returns: string; either: seconds, minuts, houres, days, weeks, months, years between the two times
+        # returns: string; either: seconds, minuts, houres, days, weeks, months, or years between the two times
         def time_difference(time1, time2)
             difference = time1 - time2
             difference_seconds = (difference.to_f * 86400).abs

@@ -22,14 +22,4 @@
     </div>
 </form>
 
-<script type="text/javascript">
-    document.querySelector("#new-category").addEventListener('click', () => {
-        category_selection = document.querySelector("#category_selection");
-        
-        category_text = document.createElement("input");
-        category_text.setAttribute("type", "text");
-        category_text.setAttribute("name", "category");
-
-        category_selection.replaceWith(category_text);
-    });
-</script>
+<script type="text/javascript" src="/js/new_category_button.js?<%=Time.now.to_i%>"></script>

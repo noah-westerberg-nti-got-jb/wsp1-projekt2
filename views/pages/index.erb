@@ -1,15 +1,67 @@
+<div id="options">
+        <script type="text/javascript">
+            let urlParams = new URLSearchParams(location.search);
+
+            let sort_option = urlParams.get('sort');
+            if (sort_option == null){
+                sort_option = "[none]";
+            }
+
+            let show = urlParams.get('show');
+            if (show == null){
+                show = "Uncompleted";
+            }
+        </script>
+
+        <span>Show: <select id="show">
+            <option>Uncompleted</option>
+            <option>All</option>
+            <option>Completed</option>
+        </select></span>
+        <span>Sort: <select id="sort-options">
+            <option>[none]</option>
+            <option>Deadline (High - Low)</option>
+            <option>Deadline (Low - High)</option>
+            <option>Importance (High - Low)</option>
+            <option>Importance (Low - High)</option>
+        </select></span>
+        
+        <script type="text/javascript"> 
+            document.querySelector("#sort-options").value = sort_option;
+            document.querySelector("#show").value = show;
+        </script>
+</div>
 <div id="list-container">
     <% @todo.each do | item | %>
         <div class="todo-container">
-            <h2> <%=item['title']%> </h2>
-            <span> <%=item['importance']%> </span>
+            <h2><%=item['title']%> </h2>
             <span> <%=item['category']%> </span>
-            <p> <%=item['description']%> </p>
+            <p><%=item['description']%> </p>
             <%if item['deadline'] != nil%>
-            <p> <%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
+            <p><%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
             <%end%>
             <button type="button" id="edit-item" onclick=<%="location.href='/edit/#{item['id']}'"%>>edit</button>
             <button type="button" id="complete-task" onclick=<%="location.href='/complete/#{item['id']}'"%>>Complete</button>
         </div>
     <% end %>
+
+    <script type="text/javascript"> 
+        reload = () => {
+            urlParams.set("sort", sort_option)
+           
+            urlParams.set("show", show);
+
+            location.href = "/?" + urlParams;
+        }
+
+        document.querySelector("#sort-options").addEventListener('change', (e) => {
+            sort_option = e.target.value;
+            reload();
+        });
+
+        document.querySelector("#show").addEventListener('change', (e) => {
+            show = e.target.value;
+            reload();
+        });
+    </script>
 </div>
