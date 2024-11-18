@@ -3,8 +3,8 @@
         <div><span>Title</span><input type="text" name="title"></div>
         <div><span>Description</span><input type="text" name="description"></div>
         <div><span>Deadline</span>
-            <input type="checkbox" name="has_deadline">
-            <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
+            <input id="deadline-switch" type="checkbox" name="has_deadline">
+            <input id="deadline-field" type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
         <div>
             <span>category</span>
             <button type="button" id="new-category">+</button>
@@ -23,3 +23,4 @@
 </form>
 
 <script type="text/javascript" src="/js/new_category_button.js?<%=Time.now.to_i%>"></script>
+<script type="text/javascript" src="/js/deadline_field_state.js"></script>

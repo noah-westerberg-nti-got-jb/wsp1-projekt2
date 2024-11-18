@@ -5,11 +5,11 @@
         <div><span>Description</span><input type="text" name="description" value="<%=@item['description']%>"></div>
         <div><span>Deadline</span>
             <%if @item['deadline'] != nil%>
-                <input type="checkbox" name="has_deadline" checked="true">
-                <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>" value="<%=DateTime.parse(@item['deadline']).to_s.split("+")[0]%>"></div>
+                <input id="deadline-switch" type="checkbox" name="has_deadline" checked="true">
+                <input id="deadline-field" type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>" value="<%=DateTime.parse(@item['deadline']).to_s.split("+")[0]%>"></div>
             <%else%>
-                <input type="checkbox" name="has_deadline">
-                <input type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
+                <input id="deadline-switch" type="checkbox" name="has_deadline">
+                <input id="deadline-field" type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
             <%end%>
         <div>
             <span>category</span>
@@ -33,3 +33,4 @@
 </form>
 
 <script type="text/javascript" src="/js/new_category_button.js?<%=Time.now.to_i%>"></script>
+<script type="text/javascript" src="/js/deadline_field_state.js"></script>
