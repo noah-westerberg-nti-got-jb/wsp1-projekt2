@@ -8,12 +8,15 @@ class Seeder
   end
 
   def self.drop_tables
-    db.execute('DROP TABLE IF EXISTS todoList')
+    db.execute('DROP TABLE IF EXISTS tasks')
+    db.execute('DROP TABLE IF EXISTS categories')
+    db.execute('DROP TABLE IF EXISTS users')    
   end
 
   def self.create_tables
-    db.execute('CREATE TABLE todoList (
+    db.execute('CREATE TABLE tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
                 title TEXT NOT NULL,
                 description TEXT,
                 creationDate DATETIME NOT NULL,
@@ -22,6 +25,19 @@ class Seeder
                 category TEXT NOT NULL,
                 importance INTEGER NOT NULL)'
                 )
+
+    db.execute('CREATE TABLE categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                parent TEXT,
+                color INTEGER NOT NULL)'
+              )
+
+    db.execute('CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL)'
+              )
   end
 
   private

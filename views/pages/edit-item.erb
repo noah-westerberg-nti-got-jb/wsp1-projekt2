@@ -1,7 +1,7 @@
 <%p @item%>
 <form action=<%="/edit/#{@item['id'].to_s}"%> method="post">
     <div id="creation-form">
-        <div><span>Title</span><input type="text" name="title" value="<%=@item['title']%>"></div>
+        <div><span>Title</span><input type="text" name="title" value="<%=@item['title']%>" required></div>
         <div><span>Description</span><input type="text" name="description" value="<%=@item['description']%>"></div>
         <div><span>Deadline</span>
             <%if @item['deadline'] != nil%>

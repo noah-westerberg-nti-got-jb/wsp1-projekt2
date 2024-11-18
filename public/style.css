@@ -7,9 +7,22 @@ body {
 }
 
 nav {
-  display: flex;
-  flex-direction: row;
   margin: 15px 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+nav div{
+  display: flex;
+}
+
+nav div:nth-child(2) {
+  flex-direction: row;
+  justify-content: end;
+}
+
+nav div:nth-child(2) span {
+  font-weight: bold;
 }
 
 nav *{

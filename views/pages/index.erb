@@ -4,7 +4,7 @@
 
             let sort_option = urlParams.get('sort');
             if (sort_option == null){
-                sort_option = "[none]";
+                sort_option = "Recent";
             }
 
             let show = urlParams.get('show');
@@ -19,11 +19,15 @@
             <option>Completed</option>
         </select></span>
         <span>Sort: <select id="sort-options">
-            <option>[none]</option>
+            <option>Recent</option>
+            <option>Old</option>
             <option>Deadline (High - Low)</option>
             <option>Deadline (Low - High)</option>
             <option>Importance (High - Low)</option>
             <option>Importance (Low - High)</option>
+        </select></span>
+        <span>Category: <select id="category-options">
+            
         </select></span>
         
         <script type="text/javascript"> 
