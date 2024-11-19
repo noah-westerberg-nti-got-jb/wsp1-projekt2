@@ -15,8 +15,11 @@
     <a href="/new"> New Task </a>
     </div>
     <div>
-    <span><%=get_username%></span>
-    <a href="/logout"> Log out </a>
+        <%username = get_username%>
+        <span><%=get_username%></span>
+        <%if username != ""%>
+        <a href="/logout"> Log out </a>
+        <%end%>
     </div>
 </nav>
 </header>

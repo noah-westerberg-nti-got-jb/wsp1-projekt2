@@ -78,8 +78,8 @@ class App < Sinatra::Base
 
         sort_option = ""
         sort = params[:sort]
-        if sort == "Recent"
-          sort_option = "ORDER BY id DESC";
+        if sort == "Recent" || sort == nil
+            sort_option = "ORDER BY id DESC"
         elsif sort == "Old"
             sort_option = "ORDER BY id ASC" 
         elsif sort == "Deadline (High - Low)"
@@ -103,6 +103,7 @@ class App < Sinatra::Base
         end
 
         @todo = db.execute("SELECT * FROM tasks #{show_option} #{sort_option}")
+        @categories = db.execute('SELECT DISTINCT category FROM tasks')
 
         # returns: string; either: seconds, minuts, houres, days, weeks, months, or years between the two times
         def time_difference(time1, time2)

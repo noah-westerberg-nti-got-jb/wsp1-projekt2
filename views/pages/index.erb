@@ -27,7 +27,10 @@
             <option>Importance (Low - High)</option>
         </select></span>
         <span>Category: <select id="category-options">
-            
+            <option selected="selected">All</option>
+            <% @categories.each do | list |%>
+                <option><%= list['category'] %></option>
+            <% end %>
         </select></span>
         
         <script type="text/javascript"> 

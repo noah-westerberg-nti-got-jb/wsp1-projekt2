@@ -8,7 +8,7 @@
         <div>
             <span>category</span>
             <button type="button" id="new-category">+</button>
-            <select id="category_selection" name="category">
+            <select id="category_selection" name="category" required>
                 <% @categories.each do | list |%>
                     <option><%= list['category'] %></option>
                 <% end %>

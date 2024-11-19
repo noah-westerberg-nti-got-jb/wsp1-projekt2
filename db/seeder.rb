@@ -28,6 +28,7 @@ class Seeder
 
     db.execute('CREATE TABLE categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
                 name TEXT NOT NULL UNIQUE,
                 parent TEXT,
                 color INTEGER NOT NULL)'
