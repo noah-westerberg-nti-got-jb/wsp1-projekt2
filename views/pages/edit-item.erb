@@ -15,12 +15,12 @@
             <span>category</span>
             <button type="button" id="new-category">+</button>
             <select id="category_selection" name="category">
-                <% @categories.each do | list |%>
+                <% @categories.each do | category |%>
                     <option
-                    <%if @item['category'] == list['category']%>
+                    <%if @item['category_name'] == category%>
                         selected="selected"
                     <%end%>>
-                    <%= list['category'] %></option>
+                    <%= category %></option>
                 <% end %>
             </select> 
         </div>

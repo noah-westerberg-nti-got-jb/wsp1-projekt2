@@ -30,6 +30,82 @@ class App < Sinatra::Base
 
         return ""
     end
+
+    def get_tasks(user_id, category_id, options)        
+        p "category: #{category_id}"
+        
+        # Get tasks from database
+        all_tasks = [] 
+        show_option = options['show']
+        if show_option == nil || show_option == "" || show_option == "Uncompleted"
+            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.id WHERE tasks.user_id = ? AND tasks.completionDate IS NULL', [user_id])
+        elsif show_option == "All"
+            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.id WHERE tasks.user_id = ?', [user_id])
+        elsif show_option == "Completed"
+            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.id WHERE tasks.user_id = ? AND tasks.completionDate IS NOT NULL', [user_id])
+        end
+
+        tasks = all_tasks
+
+        p "all tasks: #{all_tasks}"
+
+        # get categories to include
+        categories = []
+        if category_id != nil
+              categories = [category_id]
+              keep_adding = true
+              while keep_adding
+                keep_adding = false
+                all_tasks.each do |task|
+                if categories.include?(task['parent_id'])
+                  categories.concat(task['category_id'])
+                  keep_adding = true;
+                  break
+                end
+              end
+            end
+            # select tasks with categories
+            tasks = all_tasks.select {|task| categories.include?(task['category_id'])}
+        end
+
+        p "tasks: #{tasks}"
+        p "number of tasks: #{tasks.length}"
+        
+        # sort tasks
+        order_option = options['order']
+        if order_option == "Recent" || order_option == nil
+            tasks = tasks.sort_by { |task| 
+                -task['id']
+                }
+        elsif order_option == "Old"
+            tasks = tasks.sort_by {|task| task['id']}
+        elsif order_option == "Deadline (Close - Far)"
+            tasks = tasks.sort_by {|task| 
+            if task['deadline'] != nil
+              -DateTime.parse(task['deadline']).to_time.to_i
+            else
+                -1
+            end
+        }
+        elsif order_option == "Deadline (Far - Close)"
+            tasks = tasks.sort_by {|task| 
+            if task['deadline'] != nil
+              DateTime.parse(task['deadline']).to_time.to_i
+            else
+                (2**32 - 1)
+            end}
+        elsif order_option == "Importance (High - Low)"
+            tasks = tasks.sort_by {|task| -task['importance']}
+        elsif order_option == "Importance (Low - High)"
+            tasks = tasks.sort_by {|task| task['importance']}
+        end
+
+        return tasks
+    end
+
+    def get_categories(user_id)
+        return db.execute('SELECT DISTINCT category_name FROM categories WHERE user_id = ?', [user_id]).map {|category| category['category_name']}
+    end
     
     get '/login' do
         erb(:"pages/login-page")
@@ -41,6 +117,10 @@ class App < Sinatra::Base
         input_password = params[:password]
            
         user = db.execute('SELECT * FROM users WHERE username = ?', [input_username]).first;
+
+        if user == nil
+          redirect('/login')
+        end
 
         user_id = user['id'].to_i
         hashed_password = user['password'].to_s
@@ -68,6 +148,9 @@ class App < Sinatra::Base
     post '/create-account' do
         username = params[:username]
         password = BCrypt::Password.create(params[:password])
+        if (db.execute('SELECT * FROM users WHERE username = ?', [username]) != [])
+          redirect('/create-account')
+        end
         db.execute('INSERT INTO users (username, password) VALUES (?, ?)', [username, password])
         session[:user_id] = db.execute('SELECT id FROM users WHERE username = ?', [username]).first['id']
         redirect('/')
@@ -76,34 +159,23 @@ class App < Sinatra::Base
     get '/' do
         check_access
 
-        sort_option = ""
-        sort = params[:sort]
-        if sort == "Recent" || sort == nil
-            sort_option = "ORDER BY id DESC"
-        elsif sort == "Old"
-            sort_option = "ORDER BY id ASC" 
-        elsif sort == "Deadline (High - Low)"
-            sort_option = "ORDER BY deadline DESC"
-        elsif sort == "Deadline (Low - High)"
-            sort_option = "ORDER BY deadline ASC"
-        elsif sort == "Importance (High - Low)"
-            sort_option = "ORDER BY importance DESC"
-        elsif sort == "Importance (Low - High)"
-            sort_option = "ORDER BY importance ASC"
+        user_id = session[:user_id]
+
+        category = params[:category]
+        if category == "All"
+            category_id = nil
+        else
+            category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id]).first['id'] if category != nil
         end
 
-        show_option = ""
-        show = params[:show]
-        if show == nil || show == "Uncompleted"
-            show_option = "WHERE completionDate IS NULL"
-        elsif show == "Completed"
-            show_option = "WHERE completionDate IS NOT NULL"
-        elsif show == "All"
-            show_option = ""
-        end
+        options = {
+            'show' => params[:show],
+            'order' => params[:sort]
+        }
 
-        @todo = db.execute("SELECT * FROM tasks #{show_option} #{sort_option}")
-        @categories = db.execute('SELECT DISTINCT category FROM tasks')
+
+        @todo = get_tasks(user_id, category_id, options)
+        @categories = get_categories(user_id)
 
         # returns: string; either: seconds, minuts, houres, days, weeks, months, or years between the two times
         def time_difference(time1, time2)
@@ -151,7 +223,7 @@ class App < Sinatra::Base
     get '/new' do
         check_access
 
-        @categories = db.execute('SELECT DISTINCT category FROM tasks')
+        @categories = get_categories(session[:user_id])
 
         erb(:"pages/new_entry")
     end
@@ -159,6 +231,8 @@ class App < Sinatra::Base
     post '/new' do       
         check_access
         
+        user_id = session[:user_id]
+
         title = params[:title]
         description = params[:description]
         if params[:has_deadline]
@@ -167,14 +241,23 @@ class App < Sinatra::Base
             deadline = nil
         end
         category = params[:category]
+        category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id])
+        if category_id != []
+            category_id = category_id.first['id']
+        else
+            db.execute('INSERT INTO categories (category_name, user_id, color) VALUES (?,?, 0)', [category, user_id])
+            category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id]).first['id']
+            p "cat.id: #{category_id}"
+        end
+        p "cat.id: #{category_id}"
         importance = params[:importance]
         creationDate = DateTime.now.to_s.split('+')[0].sub!("T", " ")
 
-        values = [session[:user_id], title, description, deadline, category, importance, creationDate]
+        values = [user_id, title, description, deadline, category_id, importance, creationDate]
 
         p values
         
-        db.execute('INSERT INTO tasks (user_id, title, description, deadline, category, importance, creationDate) VALUES (?,?,?,?,?,?,?)', values)
+        db.execute('INSERT INTO tasks (user_id, title, description, deadline, category_id, importance, creationDate) VALUES (?,?,?,?,?,?,?)', values)
 
         redirect("/")
     end
@@ -183,7 +266,7 @@ class App < Sinatra::Base
         check_access
 
         @item = db.execute('SELECT * FROM tasks WHERE id = ?;', [id]).first
-        @categories = db.execute('SELECT DISTINCT category FROM tasks')
+        @categories = get_categories(session[:user_id])
 
         erb(:"pages/edit-item")
     end
@@ -193,17 +276,17 @@ class App < Sinatra::Base
 
         title = params[:title]
         description = params[:description]
-        if params[:has_deadline]
+        if params[:has_deadline]      
             deadline = params[:deadline].sub!("T", " ")
         else
             deadline = nil
         end
-        category = params[:category]
+        category_id = db.execute('SELECT category_id FROM categories WHERE user_id = ? AND category_name = ?', [session[:user_id], params[:category]])
         importance = params[:importance]
 
-        values = [title, description, deadline, category, importance, id]
+        values = [session[:user_id], title, description, deadline, category, importance, id]
 
-        db.execute("UPDATE tasks SET title=?, description=?, deadline=?, category=?, importance=? WHERE id = ?", values)
+        db.execute("UPDATE tasks SET user_id=?, title=?, description=?, deadline=?, category_id=?, importance=? WHERE id = ?", values)
 
         redirect("/")
     end

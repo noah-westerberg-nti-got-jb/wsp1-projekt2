@@ -11,6 +11,11 @@
             if (show == null){
                 show = "Uncompleted";
             }
+
+            let category = urlParams.get('category');
+            if (category == null){
+                category = "All";
+            }
         </script>
 
         <span>Show: <select id="show">
@@ -21,28 +26,29 @@
         <span>Sort: <select id="sort-options">
             <option>Recent</option>
             <option>Old</option>
-            <option>Deadline (High - Low)</option>
-            <option>Deadline (Low - High)</option>
+            <option>Deadline (Close - Far)</option>
+            <option>Deadline (Far - Close)</option>
             <option>Importance (High - Low)</option>
             <option>Importance (Low - High)</option>
         </select></span>
         <span>Category: <select id="category-options">
             <option selected="selected">All</option>
-            <% @categories.each do | list |%>
-                <option><%= list['category'] %></option>
+            <% @categories.each do | category |%>
+                <option><%= category %></option>
             <% end %>
         </select></span>
         
         <script type="text/javascript"> 
             document.querySelector("#sort-options").value = sort_option;
             document.querySelector("#show").value = show;
+            document.querySelector("#category-options").value = category;
         </script>
 </div>
 <div id="list-container">
     <% @todo.each do | item | %>
         <div class="todo-container">
             <h2><%=item['title']%> </h2>
-            <span> <%=item['category']%> </span>
+            <span> <%=item['category_name']%> </span>
             <p><%=item['description']%> </p>
             <%if item['deadline'] != nil%>
             <p><%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
@@ -58,6 +64,8 @@
            
             urlParams.set("show", show);
 
+            urlParams.set("category", category);
+
             location.href = "/?" + urlParams;
         }
 
@@ -70,5 +78,10 @@
             show = e.target.value;
             reload();
         });
+
+        document.querySelector('#category-options').addEventListener('change', (e) => {
+            category = e.target.value;
+            reload();
+        })
     </script>
 </div>
