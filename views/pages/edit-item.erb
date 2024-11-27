@@ -1,4 +1,3 @@
-<%p @item%>
 <form action=<%="/edit/#{@item['id'].to_s}"%> method="post">
     <div id="creation-form">
         <div><span>Title</span><input type="text" name="title" value="<%=@item['title']%>" required></div>

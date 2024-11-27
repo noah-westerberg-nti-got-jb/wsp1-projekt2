@@ -32,8 +32,6 @@ class App < Sinatra::Base
     end
 
     def get_tasks(user_id, category_id, options)        
-        p "category: #{category_id}"
-        
         # Get tasks from database
         all_tasks = [] 
         show_option = options['show']
@@ -46,8 +44,6 @@ class App < Sinatra::Base
         end
 
         tasks = all_tasks
-
-        p "all tasks: #{all_tasks}"
 
         # get categories to include
         categories = []
@@ -67,9 +63,6 @@ class App < Sinatra::Base
             # select tasks with categories
             tasks = all_tasks.select {|task| categories.include?(task['category_id'])}
         end
-
-        p "tasks: #{tasks}"
-        p "number of tasks: #{tasks.length}"
         
         # sort tasks
         order_option = options['order']
@@ -173,7 +166,6 @@ class App < Sinatra::Base
             'order' => params[:sort]
         }
 
-
         @todo = get_tasks(user_id, category_id, options)
         @categories = get_categories(user_id)
 
@@ -247,16 +239,12 @@ class App < Sinatra::Base
         else
             db.execute('INSERT INTO categories (category_name, user_id, color) VALUES (?,?, 0)', [category, user_id])
             category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id]).first['id']
-            p "cat.id: #{category_id}"
         end
-        p "cat.id: #{category_id}"
         importance = params[:importance]
         creationDate = DateTime.now.to_s.split('+')[0].sub!("T", " ")
 
         values = [user_id, title, description, deadline, category_id, importance, creationDate]
 
-        p values
-        
         db.execute('INSERT INTO tasks (user_id, title, description, deadline, category_id, importance, creationDate) VALUES (?,?,?,?,?,?,?)', values)
 
         redirect("/")
