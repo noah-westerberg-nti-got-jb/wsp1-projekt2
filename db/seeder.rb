@@ -21,11 +21,12 @@ class Seeder
                 )  
               
     db.execute('CREATE TABLE categories (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 category_name TEXT NOT NULL,
                 parent_id INTEGER,
-                color INTEGER NOT NULL)'
+                background_color INTEGER NOT NULL,
+                text_color INTEGER NOT NULL)'
                 )
       
     db.execute('CREATE TABLE tasks (
@@ -33,9 +34,9 @@ class Seeder
                 user_id INTEGER NOT NULL,
                 title TEXT NOT NULL,
                 description TEXT,
-                creationDate DATETIME NOT NULL,
+                creation_date DATETIME NOT NULL,
                 deadline DATETIME,
-                completionDate DATETIME,
+                completion_date DATETIME,
                 category_id INTEGER NOT NULL,
                 importance INTEGER NOT NULL)'
                 )

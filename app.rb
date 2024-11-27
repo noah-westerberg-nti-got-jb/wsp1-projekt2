@@ -22,7 +22,7 @@ class App < Sinatra::Base
             redirect('/login')
         end
 
-        p "user id: #{session[:user_id]}"
+        p "USER ID: #{session[:user_id]} HAS ENTERD"
     end
 
     def get_username
@@ -31,19 +31,28 @@ class App < Sinatra::Base
         return ""
     end
 
+	def category_id(category_name, user_id)
+        category_id = db.execute('SELECT category_id FROM categories WHERE category_name = ? AND user_id = ?', [category_name, user_id])
+        if category_id != []
+            category_id = category_id.first['category_id']
+        else
+            db.execute('INSERT INTO categories (category_name, user_id, background_color, text_color) VALUES (?,?, 0, 0)', [category_name, user_id])
+            category_id = db.execute('SELECT category_id FROM categories WHERE category_name = ? AND user_id = ?', [category_name, user_id]).first['category_id']
+        end
+		return category_id
+	end
+
     def get_tasks(user_id, category_id, options)        
         # Get tasks from database
         all_tasks = [] 
         show_option = options['show']
         if show_option == nil || show_option == "" || show_option == "Uncompleted"
-            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.id WHERE tasks.user_id = ? AND tasks.completionDate IS NULL', [user_id])
+            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.category_id WHERE tasks.user_id = ? AND tasks.completion_date IS NULL', [user_id])
         elsif show_option == "All"
-            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.id WHERE tasks.user_id = ?', [user_id])
+            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.category_id WHERE tasks.user_id = ?', [user_id])
         elsif show_option == "Completed"
-            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.id WHERE tasks.user_id = ? AND tasks.completionDate IS NOT NULL', [user_id])
+            all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.category_id WHERE tasks.user_id = ? AND tasks.completion_date IS NOT NULL', [user_id])
         end
-
-        tasks = all_tasks
 
         # get categories to include
         categories = []
@@ -158,7 +167,7 @@ class App < Sinatra::Base
         if category == "All"
             category_id = nil
         else
-            category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id]).first['id'] if category != nil
+            category_id = db.execute('SELECT category_id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id]).first['category_id'] if category != nil
         end
 
         options = {
@@ -232,20 +241,16 @@ class App < Sinatra::Base
         else
             deadline = nil
         end
+
         category = params[:category]
-        category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id])
-        if category_id != []
-            category_id = category_id.first['id']
-        else
-            db.execute('INSERT INTO categories (category_name, user_id, color) VALUES (?,?, 0)', [category, user_id])
-            category_id = db.execute('SELECT id FROM categories WHERE category_name = ? AND user_id = ?', [category, user_id]).first['id']
-        end
+		category_id = category_id(category, user_id)
+
         importance = params[:importance]
-        creationDate = DateTime.now.to_s.split('+')[0].sub!("T", " ")
+        creation_date = DateTime.now.to_s.split('+')[0].sub!("T", " ")
 
-        values = [user_id, title, description, deadline, category_id, importance, creationDate]
+        values = [user_id, title, description, deadline, category_id, importance, creation_date]
 
-        db.execute('INSERT INTO tasks (user_id, title, description, deadline, category_id, importance, creationDate) VALUES (?,?,?,?,?,?,?)', values)
+        db.execute('INSERT INTO tasks (user_id, title, description, deadline, category_id, importance, creation_date) VALUES (?,?,?,?,?,?,?)', values)
 
         redirect("/")
     end
@@ -262,6 +267,8 @@ class App < Sinatra::Base
     post '/edit/:id' do | id |
         check_access
 
+		user_id = session[:user_id]
+
         title = params[:title]
         description = params[:description]
         if params[:has_deadline]      
@@ -269,12 +276,15 @@ class App < Sinatra::Base
         else
             deadline = nil
         end
-        category_id = db.execute('SELECT category_id FROM categories WHERE user_id = ? AND category_name = ?', [session[:user_id], params[:category]])
+        
+		category = params[:category]
+		category_id = category_id(category, user_id)
+
         importance = params[:importance]
 
-        values = [session[:user_id], title, description, deadline, category, importance, id]
+        values = [title, description, deadline, category_id, importance, id]
 
-        db.execute("UPDATE tasks SET user_id=?, title=?, description=?, deadline=?, category_id=?, importance=? WHERE id = ?", values)
+        db.execute("UPDATE tasks SET title=?, description=?, deadline=?, category_id=?, importance=? WHERE id = ?", values)
 
         redirect("/")
     end
@@ -290,7 +300,7 @@ class App < Sinatra::Base
         check_access
 
         time = DateTime.now.to_s.sub!("T", " ")
-        db.execute('UPDATE tasks SET completionDate = ? WHERE id = ?', [time, id])
+        db.execute('UPDATE tasks SET completion_date = ? WHERE id = ?', [time, id])
 
         redirect("/")
     end
