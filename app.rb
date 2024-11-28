@@ -54,6 +54,11 @@ class App < Sinatra::Base
             all_tasks = db.execute('SELECT * FROM tasks JOIN categories ON tasks.category_id = categories.category_id WHERE tasks.user_id = ? AND tasks.completion_date IS NOT NULL', [user_id])
         end
 
+        # exit if there arn't any tasks
+        if all_tasks == []
+            return []
+        end 
+
         # get categories to include
         categories = []
         if category_id != nil
@@ -69,8 +74,11 @@ class App < Sinatra::Base
                 end
               end
             end
+            
             # select tasks with categories
             tasks = all_tasks.select {|task| categories.include?(task['category_id'])}
+        else
+            tasks = all_tasks
         end
         
         # sort tasks
