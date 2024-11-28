@@ -89,7 +89,7 @@ class App < Sinatra::Base
                 }
         elsif order_option == "Old"
             tasks = tasks.sort_by {|task| task['id']}
-        elsif order_option == "Deadline (Close - Far)"
+        elsif order_option == "Deadline (Far - Close)"
             tasks = tasks.sort_by {|task| 
             if task['deadline'] != nil
               -DateTime.parse(task['deadline']).to_time.to_i
@@ -97,7 +97,7 @@ class App < Sinatra::Base
                 -1
             end
         }
-        elsif order_option == "Deadline (Far - Close)"
+        elsif order_option == "Deadline (Close - Far)"
             tasks = tasks.sort_by {|task| 
             if task['deadline'] != nil
               DateTime.parse(task['deadline']).to_time.to_i
