@@ -144,7 +144,7 @@ class App < Sinatra::Base
     end
 
     get '/create-account' do
-        erb(:"pages/create-page")
+        erb(:"pages/create-user")
     end
 
     post '/create-account' do
