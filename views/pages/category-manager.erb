@@ -1,0 +1,18 @@
+<form action="/update-categories" method="post">
+    <div id="category-list-outercontainer">
+        <button type="submit"><strong>Save Changes</strong></button>
+        <div id="category-list-innercontainer"></div>
+        <button type="submit"><strong>Save Changes</strong></button>
+    <div>
+</form>
+
+<script>let new_item</script>
+<%@categories.each do | category |%>
+    <script type="text/javascript">
+        new_item = document.createElement('div');
+
+        new_item.innerHTML = "<%=category['category_name']%>"
+
+        document.querySelector('#category-list-innercontainer').appendChild(new_item);
+    </script>
+<%end%>

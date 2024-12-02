@@ -89,3 +89,8 @@ nav *{
 #options *{
   font-size: 20px;
 }
+
+#category-list-outercontainer {
+  border: 3px solid grey;
+  background: lightslategray;
+}

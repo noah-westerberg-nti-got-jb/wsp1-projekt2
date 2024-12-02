@@ -312,4 +312,12 @@ class App < Sinatra::Base
 
         redirect("/")
     end
+
+    get '/categories' do
+        check_access
+
+        @categories = db.execute('SELECT * FROM categories WHERE user_id = ?', [session[:user_id]])
+
+        erb(:"pages/category-manager")
+    end
  end
