@@ -53,8 +53,15 @@
             <%if item['deadline'] != nil%>
             <p><%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
             <%end%>
-            <button type="button" id="edit-item" onclick=<%="location.href='/edit/#{item['id']}'"%>>edit</button>
-            <button type="button" id="complete-task" onclick=<%="location.href='/complete/#{item['id']}'"%>>Complete</button>
+            <button type="button" id="edit-item" onclick="location.href='/edit/<%=item['id']%>';">edit</button>
+            <%is_completed = (item['completion_date'] == nil) ? 0 : 1%>
+            <button type="button" id="complete-task" onclick="location.href='/complete/<%=item['id']%>/<%=is_completed%>';">
+                <%if is_completed == 1%>
+                    Uncomplete
+                <%else%>
+                    Complete
+                <%end%>
+                </button>
         </div>
     <% end %>
 

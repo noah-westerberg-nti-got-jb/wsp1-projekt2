@@ -304,10 +304,17 @@ class App < Sinatra::Base
         redirect("/")
     end
 
-    get '/complete/:id' do | id |
+    get '/complete/:id/:is_completed' do | id, is_completed|
         check_access
 
-        time = DateTime.now.to_s.sub!("T", " ")
+        time = nil
+        if is_completed.to_i == 0
+            p "enter"
+            time = DateTime.now.to_s.sub!("T", " ")
+        end
+
+        p "completed #{is_completed} set #{time}"
+
         db.execute('UPDATE tasks SET completion_date = ? WHERE id = ?', [time, id])
 
         redirect("/")
