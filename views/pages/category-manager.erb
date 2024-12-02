@@ -1,18 +1,33 @@
 <form action="/update-categories" method="post">
-    <div id="category-list-outercontainer">
+    <div id="categorylist-outercontainer">
         <button type="submit"><strong>Save Changes</strong></button>
-        <div id="category-list-innercontainer"></div>
+        <div id="categorylist-innercontainer"></div>
         <button type="submit"><strong>Save Changes</strong></button>
     <div>
 </form>
 
-<script>let new_item</script>
 <%@categories.each do | category |%>
     <script type="text/javascript">
-        new_item = document.createElement('div');
+        var new_item = document.createElement('div');
+        new_item.className = "categorylist-item";
+        new_item.category_id = <%=category['category_id']%>;
 
-        new_item.innerHTML = "<%=category['category_name']%>"
+        new_item.innerHTML = `
+            <div class="categorylist-item-left">
+                <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
+            </div>
+            <div class="categorylist-item-right">
+                <span class="text-color-area">
+                Text-color: <input type="color" value="<%=category['text_color']%>">
+                </span>
+                <span class="background-color-area">
+                Background-color: <input type="color" value="<%=category['background_color']%>">
+                </span>
+            </div>
+        `;
+        
+        console.log(new_item);
 
-        document.querySelector('#category-list-innercontainer').appendChild(new_item);
+        document.querySelector('#categorylist-innercontainer').appendChild(new_item);
     </script>
 <%end%>

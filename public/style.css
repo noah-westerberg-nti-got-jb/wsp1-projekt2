@@ -90,7 +90,26 @@ nav *{
   font-size: 20px;
 }
 
-#category-list-outercontainer {
+#categorylist-outercontainer {
   border: 3px solid grey;
   background: lightslategray;
+}
+
+.categorylist-item {
+  border: black solid 1px;
+  background: lightgrey;
+  
+  margin: 1px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.categorylist-item span {
+  margin: 0 10px;
+}
+
+.categorylist-item-right {
+  display: flex;
+  justify-content: end;
 }
