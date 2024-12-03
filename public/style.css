@@ -95,7 +95,7 @@ nav *{
   background: lightslategray;
 }
 
-.categorylist-item {
+.category-options {
   border: black solid 1px;
   background: lightgrey;
   
@@ -105,8 +105,17 @@ nav *{
   grid-template-columns: 1fr 1fr;
 }
 
-.categorylist-item span {
+.category-options div {
+  display: flex;
+  align-items: center;
+}
+
+.category-options span {
   margin: 0 10px;
+}
+
+.category-options button {
+  margin: 0 5px;
 }
 
 .categorylist-item-right {
