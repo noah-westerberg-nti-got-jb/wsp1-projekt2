@@ -323,6 +323,30 @@ class App < Sinatra::Base
 
         @categories = db.execute('SELECT * FROM categories WHERE user_id = ?', [session[:user_id]])
 
+        @sorted_categories = @categories.sort_by {|category| category['category_id']}
+        def get_nesting_level(parent_id)
+            if parent_id == nil
+                return 0
+            end
+
+             left = 0
+             right = @sorted_categories.length - 1
+             index = 0
+             loop do
+                index = left + (right - left) / 2
+                search_id = @sorted_categories[index]['category_id']    
+                break if search_id == parent_id
+
+                if search_id > parent_id
+                    right = index - 1
+                else
+                    left = index + 1
+                end
+          end
+
+          return 1 + get_nesting_level(@sorted_categories[index]['parent_id'])
+        end
+
         erb(:"pages/category-manager")
     end
  end

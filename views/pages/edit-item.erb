@@ -29,7 +29,7 @@
         <div><span>Importance</span><input type="range" value="<%=@item['importance']%>" min="1" max="5" step="1" name="importance"></div>
         <div id="form-button-container">
         <button type="submit"> Confirm Change </button>
-        <button type="button" id="delete-item" onclick=<%="location.href='/delete/#{@item['id']}'"%>>delete</button>
+        <button type="button" id="delete-button" onclick=<%="location.href='/delete/#{@item['id']}'"%>>delete</button>
         </div>
     </div>
 </form>

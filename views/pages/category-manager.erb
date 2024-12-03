@@ -7,8 +7,8 @@
     <div>
 </form>
 
-<%@categories.each do | category |%>
-    <script type="text/javascript">
+<script type="text/javascript">
+    <%@categories.each do | category |%>
         var new_item = document.createElement('div');
         new_item.className = "categorylist-item";
         new_item.category_id = <%=category['category_id']%>;
@@ -17,6 +17,7 @@
             <div class="categorylist-item-left">
                 <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
                 <button type="button" onclick="newCategory(<%category['category_id']%>)">new child</button>
+                <button type="button" id="delete-button" onclick="location.href='/delete-category/<%=category['category_id']%>'">delete</button>
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
@@ -28,8 +29,8 @@
             </div>
         `;
         
-        console.log(new_item);
+        new_item.style.marginLeft = (30 * <%=get_nesting_level(category['parent_id'])%>) + "px";
 
         document.querySelector('#categorylist-innercontainer').appendChild(new_item);
-    </script>
-<%end%>
+    <%end%>
+</script>
