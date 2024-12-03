@@ -43,6 +43,18 @@ class App < Sinatra::Base
 		return category_id
 	end
 
+    def get_subcategory_ids(category_id, categories)
+        subcategories = [category_id]
+
+        categories.each do |category|
+          if category['parent_id'] == category_id
+            subcategories.concat(get_subcategory_ids(category['category_id'], categories))
+          end
+        end
+
+        return subcategories
+    end
+
     def get_tasks(user_id, category_id, options)        
         # Get tasks from database
         all_tasks = [] 
@@ -60,22 +72,11 @@ class App < Sinatra::Base
             return []
         end 
 
+        tasks = []
         # get categories to include
-        categories = []
         if category_id != nil
-              categories = [category_id]
-              keep_adding = true
-              while keep_adding
-                keep_adding = false
-                all_tasks.each do |task|
-                if categories.include?(task['parent_id'])
-                  categories.concat(task['category_id'])
-                  keep_adding = true;
-                  break
-                end
-              end
-            end
-            
+            all_categories = db.execute('SELECT category_id, parent_id FROM categories WHERE user_id = ?', [session[:user_id]])
+            categories = get_subcategory_ids(category_id, all_categories)
             # select tasks with categories
             tasks = all_tasks.select {|task| categories.include?(task['category_id'])}
         else
