@@ -14,9 +14,10 @@
     <div class="categorylist-item" id="<%=category['category_name']%>">
         <div class="category-options">
             <div class="categorylist-item-left">
+                <button type="button" onclick="collapse(this, '<%=category['category_id']%>')" collapsed="false">collapse</button>
                 <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
-                <button type="button" onclick="newCategory(<%=category['category_id']%>)">new child</button>
-                <button type="button" id="delete-button" onclick="delete-category(<%=category['category_id']%>)">delete</button>
+                <button type="button" onclick="newCategory('<%=category['category_id']%>')">new child</button>
+                <button type="button" id="delete-button" onclick="deleteCategory('<%=category['category_id']%>')">delete</button>
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
@@ -47,4 +48,21 @@
     append_list.forEach(element => {
         document.getElementById(element.parent_id).appendChild(element.element);
     });
+</script>
+
+
+<script type="text/javascript">
+
+collapse = (element, id) => {
+    if (element.collapsed) {
+        document.getElementById(id).style.display = "block";
+        element.innerHTML = "collapse";
+    } 
+    else {
+        document.getElementById(id).style.display = "none";
+        element.innerHTML = "expand";
+    }
+    element.collapsed = !element.collapsed
+};
+
 </script>
