@@ -16,7 +16,7 @@
             <span id="category-list"><select id="category_selection" name="category" required>
                 <% @categories.each do | category |%>
                     <option
-                    <%if @item['category_name'] == category%>
+                    <%if @item['category_id'] == category_id(category, @item['user_id'])%>
                         selected="selected"
                     <%end%>>
                     <%= category %></option>

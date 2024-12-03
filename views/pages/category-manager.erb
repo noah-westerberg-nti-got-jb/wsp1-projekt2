@@ -1,6 +1,7 @@
 <form action="/update-categories" method="post">
     <div id="categorylist-outercontainer">
         <button type="submit"><strong>Save Changes</strong></button>
+        <button type="button" onclick="createCategory(null)">new category</button>
         <div id="categorylist-innercontainer"></div>
         <button type="submit"><strong>Save Changes</strong></button>
     <div>
@@ -15,6 +16,7 @@
         new_item.innerHTML = `
             <div class="categorylist-item-left">
                 <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
+                <button type="button" onclick="newCategory(<%category['category_id']%>)">new child</button>
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">

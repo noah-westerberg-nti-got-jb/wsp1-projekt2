@@ -31,6 +31,7 @@ class App < Sinatra::Base
         return ""
     end
 
+    # returns category id if exists else creates new category and returns its id.
 	def category_id(category_name, user_id)
         category_id = db.execute('SELECT category_id FROM categories WHERE category_name = ? AND user_id = ?', [category_name, user_id])
         if category_id != []
