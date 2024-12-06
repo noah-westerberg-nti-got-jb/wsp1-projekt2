@@ -122,3 +122,7 @@ nav *{
   display: flex;
   justify-content: end;
 }
+
+.sub-categories{
+  padding-left: 30px;
+}

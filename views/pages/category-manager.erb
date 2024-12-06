@@ -2,6 +2,7 @@
     <div id="categorylist-outercontainer">
         <button type="submit"><strong>Save Changes</strong></button>
         <button type="button" onclick="createCategory(null)">new category</button>
+        <button type="button" class="set-parent-button" onclick="setParent(null)" style="display: none;">[none]</button>
         <div id="categorylist-innercontainer"></div>
         <button type="submit"><strong>Save Changes</strong></button>
     <div>
@@ -11,17 +12,19 @@
     const append_list = [];
 </script>
 <%@categories.each do | category |%>
-    <div class="categorylist-item" id="<%=category['category_name']%>">
+    <div class="categorylist-item" id="<%=category['category_id']%>">
         <div class="category-options">
             <div class="categorylist-item-left">
-                <button type="button" onclick="collapse(this, '<%=category['category_id']%>')" collapsed="false">collapse</button>
+                <button type="button" onclick="collapse(this, <%=category['category_id']%>)" collapsed="false">collapse</button>
                 <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
-                <button type="button" onclick="newCategory('<%=category['category_id']%>')">new child</button>
-                <button type="button" id="delete-button" onclick="deleteCategory('<%=category['category_id']%>')">delete</button>
+                <button type="button" class="set-parent-button" onclick="setParent(<%=category['category_id']%>)" style="display: none;">append</button>
+                <button type="button" onclick="changeParent(<%=category['category_id']%>)">change parent</button>
+                <button type="button" onclick="newCategory(<%=category['category_id']%>)">new child</button>
+                <button type="button" id="delete-button" onclick="deleteCategory(<%=category['category_id']%>)">delete</button>
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
-                    <%# TODO: fix color values%>
+                    <%# TODO: fix color values %>
                     Text-color: <input type="color" value="<%=category['text_color']%>">
                 </span>
                 <span class="background-color-area">
@@ -29,15 +32,14 @@
                 </span>
             </div>
         </div>
-        <div class="sub-categories" id="<%=category['category_id']%>"></div>
+        <div class="sub-categories" id="subcategories-<%=category['category_id']%>"></div>
     </div>
 
     <script type="text/javascript">
-        var new_item = document.getElementById('<%=category['category_name']%>')
+        var new_item = document.getElementById('<%=category['category_id']%>')
         var nesting_level = <%=get_nesting_level(category['parent_id'])%>
         if (nesting_level) {
-            new_item.style.marginLeft = (30 * nesting_level) + "px";
-            append_list.push({element: new_item, parent_id:"<%=category['parent_id']%>"});
+            append_list.push({element: new_item, parent_id:"subcategories-<%=category['parent_id']%>"});
         }
         else {
             append_list.push({element: new_item, parent_id:"categorylist-innercontainer"});
@@ -53,16 +55,48 @@
 
 <script type="text/javascript">
 
-collapse = (element, id) => {
-    if (element.collapsed) {
-        document.getElementById(id).style.display = "block";
-        element.innerHTML = "collapse";
+collapse = (button, id) => {
+    if (button.collapsed) {
+        document.getElementById("subcategories-" + id).style.display = "block";
+        button.innerHTML = "collapse";
     } 
     else {
-        document.getElementById(id).style.display = "none";
-        element.innerHTML = "expand";
+        document.getElementById("subcategories-" + id).style.display = "none";
+        button.innerHTML = "expand";
     }
-    element.collapsed = !element.collapsed
+    button.collapsed = !button.collapsed
+};
+
+deleteCategory = (id) => {
+
+};
+
+let child_to_append = null;
+changeParent = (id) => {
+    document.querySelectorAll('button').forEach((button) => {
+        if (button.className == "set-parent-button") {
+            button.style.display = "";
+        }
+        else {
+            button.style.display = "none";
+        }
+    });
+
+    child_to_append = document.getElementById(id);
+};
+
+setParent = (id) => {
+    const append_id = (id == null) ? "categorylist-innercontainer" : "subcategories-" + id;
+    document.getElementById(append_id).appendChild(child_to_append);
+    
+    document.querySelectorAll('button').forEach((button) => {
+        if (button.className == "set-parent-button") {
+            button.style.display = "none";
+        }
+        else {
+            button.style.display = "";
+        }
+    });
 };
 
 </script>
