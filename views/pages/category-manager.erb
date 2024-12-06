@@ -14,32 +14,9 @@
     const append_list = [];
 </script>
 <%@categories.each do | category |%>
-    <div class="categorylist-item" id="<%=category['category_id']%>">
-        <div class="category-options">
-            <div class="categorylist-item-left">
-                <button type="button" onclick="collapse(this, <%=category['category_id']%>)" collapsed="false">collapse</button>
-                <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
-                <button type="button" class="set-parent-button" onclick="setParent(<%=category['category_id']%>)" style="display: none;">append</button>
-                <button type="button" onclick="changeParent(<%=category['category_id']%>)">change parent</button>
-                <button type="button" onclick="createCategory(<%=category['category_id']%>)">new child</button>
-                <button type="button" id="delete-button" onclick="deleteCategory(<%=category['category_id']%>)">delete</button>
-            </div>
-            <div class="categorylist-item-right">
-                <span class="text-color-area">
-                    <%# TODO: fix color values %>
-                    Text-color: <input type="color" value="<%=category['text_color']%>">
-                </span>
-                <span class="background-color-area">
-                    Background-color: <input type="color" value="<%=category['background_color']%>">
-                </span>
-            </div>
-        </div>
-        <div class="sub-categories" id="subcategories-<%=category['category_id']%>"></div>
-    </div>
-
     <script type="text/javascript">
-        var new_item = document.getElementById('<%=category['category_id']%>')
-        var nesting_level = <%=get_nesting_level(category['parent_id'])%>
+        var new_item = instantiateCategory("<%=category['category_name']%>", <%=category['category_id']%>, <%=category['background_color']%>, <%=category['text_color']%>);
+        var nesting_level = <%=get_nesting_level(category['parent_id'])%>;
         if (nesting_level) {
             append_list.push({element: new_item, parent_id:"subcategories-<%=category['parent_id']%>"});
         }

@@ -58,18 +58,16 @@ setParent = (id) => {
     });
 };
 
-let new_id_num = 0;
-createCategory = (parent_id) => {
+instantiateCategory = (name, id, background_color, text_color) => {
     new_category = document.createElement('div');
-    new_category.className= "categorylist-item";
-    const id = "new" + new_id_num++;
+    new_category.className = "categorylist-item";
     new_category.id = id;
 
     new_category.innerHTML = `
         <div class="category-options">
             <div class="categorylist-item-left">
                 <button type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
-                <span class="category-list-item-name"><input type="text" required></span>
+                <span class="category-list-item-name"><input type="text" required value="${name}"></span>
                 <button type="button" class="set-parent-button" onclick="setParent('${id}')" style="display: none;">append</button>
                 <button type="button" onclick="changeParent('${id}')">change parent</button>
                 <button type="button" onclick="createCategory('${id}')">new child</button>
@@ -77,15 +75,24 @@ createCategory = (parent_id) => {
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
-                    Text-color: <input type="color">
+                    Text-color: <input type="color" value=${text_color}>
                 </span>
                 <span class="background-color-area">
-                    Background-color: <input type="color">
+                    Background-color: <input type="color" value=${background_color}>
                 </span>
             </div>
         </div>
         <div class="sub-categories" id="subcategories-${id}"></div>
     `;
+
+    document.body.appendChild(new_category);
+
+    return new_category;
+};
+
+let new_id_num = 0;
+createCategory = (parent_id) => {
+    new_category = instantiateCategory("", "new" + new_id_num++, 0, 0);
 
     parent_element_id = (parent_id == null) ? "categorylist-innercontainer" : "subcategories-" + parent_id;
     document.getElementById(parent_element_id).appendChild(new_category);
