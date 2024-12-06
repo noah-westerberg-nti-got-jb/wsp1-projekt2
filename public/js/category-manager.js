@@ -11,7 +11,23 @@ collapse = (button, id) => {
 };
 
 deleteCategory = (id) => {
+    setDeleted = (category_element) =>  {
+        category_element.deleted = true;
+        
+        const category = category_element.children[0];
+        category.style.background = "red";
+        
+        disable = (element) => {element.disabled = true;};
+        Array.from(category.getElementsByTagName('input')).forEach((element) => disable(element));
+        Array.from(category.getElementsByTagName('button')).forEach((element) => disable(element));
 
+        const subcategories = category_element.children[1]; 
+        if (subcategories.children.length) {
+           Array.from(subcategories.children).forEach((subcategory) => setDeleted(subcategory));
+        }
+    };
+
+    setDeleted(document.getElementById(id));
 };
 
 let child_to_append = null;
