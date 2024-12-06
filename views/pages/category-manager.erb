@@ -19,7 +19,7 @@
                 <span class="category-list-item-name"><input type="text" required value="<%=category['category_name']%>"></span>
                 <button type="button" class="set-parent-button" onclick="setParent(<%=category['category_id']%>)" style="display: none;">append</button>
                 <button type="button" onclick="changeParent(<%=category['category_id']%>)">change parent</button>
-                <button type="button" onclick="newCategory(<%=category['category_id']%>)">new child</button>
+                <button type="button" onclick="createCategory(<%=category['category_id']%>)">new child</button>
                 <button type="button" id="delete-button" onclick="deleteCategory(<%=category['category_id']%>)">delete</button>
             </div>
             <div class="categorylist-item-right">
@@ -97,6 +97,43 @@ setParent = (id) => {
             button.style.display = "";
         }
     });
+};
+
+let new_id_num = 0;
+createCategory = (parent_id) => {
+    new_category = document.createElement('div');
+    new_category.className= "categorylist-item";
+    const id = "new" + new_id_num++;
+    new_category.id = id;
+
+    new_category.innerHTML = `
+        <div class="category-options">
+            <div class="categorylist-item-left">
+                <button type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
+                <span class="category-list-item-name"><input type="text" required></span>
+                <button type="button" class="set-parent-button" onclick="setParent('${id}')" style="display: none;">append</button>
+                <button type="button" onclick="changeParent('${id}')">change parent</button>
+                <button type="button" onclick="createCategory('${id}')">new child</button>
+                <button type="button" id="delete-button" onclick="deleteCategory('${id}')">delete</button>
+            </div>
+            <div class="categorylist-item-right">
+                <span class="text-color-area">
+                    Text-color: <input type="color">
+                </span>
+                <span class="background-color-area">
+                    Background-color: <input type="color">
+                </span>
+            </div>
+        </div>
+        <div class="sub-categories" id="subcategories-${id}"></div>
+    `;
+
+    console.log(new_category);
+
+    parent_element_id = (parent_id == null) ? "categorylist-innercontainer" : "subcategories-" + parent_id;
+    parent = document.getElementById(parent_element_id);
+    console.log(parent);
+    parent.appendChild(new_category);
 };
 
 </script>
