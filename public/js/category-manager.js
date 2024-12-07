@@ -14,7 +14,7 @@ deleteCategory = (id) => {
     setDeleted = (category_element) =>  {
         category_element.deleted = true;
         
-        const category = category_element.children[0];
+        const category = category_element.querySelector(".category-options");
         category.style.background = "red";
         
         Array.from(category.getElementsByTagName('input')).forEach((element) => {element.disabled = true;});
@@ -24,7 +24,7 @@ deleteCategory = (id) => {
             }
         });
 
-        const subcategories = category_element.children[1]; 
+        const subcategories = category_element.querySelector(".sub-categories"); 
         if (subcategories.children.length) {
            Array.from(subcategories.children).forEach((subcategory) => setDeleted(subcategory));
         }
@@ -39,7 +39,7 @@ undoDeletion = (id) => {
     undo = (category_element) =>  {
         category_element.deleted = false;
         
-        const category = category_element.children[0];
+        const category = category_element.querySelector(".category-options");
         category.style.background = "";
         
         Array.from(category.getElementsByTagName('input')).forEach((element) => {element.disabled = false;});
@@ -52,7 +52,7 @@ undoDeletion = (id) => {
             }
         });
 
-        const subcategories = category_element.children[1]; 
+        const subcategories = category_element.querySelector(".sub-categories"); 
         if (subcategories.children.length) {
            Array.from(subcategories.children).forEach((subcategory) => undo(subcategory));
         }
@@ -65,7 +65,7 @@ let child_to_append = null;
 changeParent = (id) => {
     document.querySelectorAll('button').forEach((button) => {
         if (button.className == "set-parent-button") {
-            button.style.display = "";
+            button.style.display = "inline-block";
         }
         else {
             button.style.display = "none";
@@ -76,11 +76,10 @@ changeParent = (id) => {
 };
 
 setParent = (id) => {
-    const append_id = (id == null) ? "categorylist-innercontainer" : "subcategories-" + id;
-    document.getElementById(append_id).appendChild(child_to_append);
+    appendToParent(child_to_append, id);
     
     document.querySelectorAll('button').forEach((button) => {
-        if (button.className == "set-parent-button") {
+        if (button.className == "set-parent-button" || button.className == "undo-button") {
             button.style.display = "none";
         }
         else {
@@ -89,16 +88,25 @@ setParent = (id) => {
     });
 };
 
+appendToParent = (element, parent_id) => {
+    element.querySelector(".parent_id_input").value = (parent_id == "categorylist-innercontainer") ? null : parent_id;
+    
+    parent_element_id = (!parent_id) ? "categorylist-innercontainer" : "subcategories-" + parent_id;
+
+    document.getElementById(parent_element_id).appendChild(element);
+}
+
 instantiateCategory = (name, id, background_color, text_color) => {
     new_category = document.createElement('div');
     new_category.className = "categorylist-item";
     new_category.id = id;
 
     new_category.innerHTML = `
+        <input type="text" class="parent_id_input" name="${id}#parent_id" style="display:none;">
         <div class="category-options">
             <div class="categorylist-item-left">
                 <button class="collapse-button" type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
-                <span class="category-list-item-name"><input type="text" required value="${name}"></span>
+                <span class="category-list-item-name"><input type="text" name="${id}#name" required value="${name}"></span>
                 <button type="button" class="set-parent-button" onclick="setParent('${id}')" style="display: none;">append</button>
                 <button type="button" onclick="changeParent('${id}')">change parent</button>
                 <button type="button" onclick="createCategory('${id}')">new child</button>
@@ -107,10 +115,10 @@ instantiateCategory = (name, id, background_color, text_color) => {
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
-                    Text-color: <input type="color" value=${text_color}>
+                    Text-color: <input type="color" name="${id}#text-color" value=${text_color}>
                 </span>
                 <span class="background-color-area">
-                    Background-color: <input type="color" value=${background_color}>
+                    Background-color: <input type="color" name="${id}#background-color" value=${background_color}>
                 </span>
             </div>
         </div>
@@ -126,6 +134,5 @@ let new_id_num = 0;
 createCategory = (parent_id) => {
     new_category = instantiateCategory("", "new" + new_id_num++, 0, 0);
 
-    parent_element_id = (parent_id == null) ? "categorylist-innercontainer" : "subcategories-" + parent_id;
-    document.getElementById(parent_element_id).appendChild(new_category);
+    appendToParent(new_category, parent_id);
 };

@@ -350,4 +350,29 @@ class App < Sinatra::Base
 
         erb(:"pages/category-manager")
     end
+
+    post '/update-categories' do 
+        check_access
+
+        category_hash = Hash.new
+
+        category_array = params.map { |k, value|
+            split_key = k.split("#")
+            id = split_key[0]
+            key = split_key[1]
+            
+            category_hash[id] = Hash.new
+
+            [id, key, value]
+        }
+
+        category_array.each do |id, key, value|
+          category_hash[id][key] = value
+        end
+
+        p category_hash
+
+
+        redirect('/categories')
+    end
  end

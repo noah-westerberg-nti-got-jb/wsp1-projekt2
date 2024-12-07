@@ -15,18 +15,11 @@
 </script>
 <%@categories.each do | category |%>
     <script type="text/javascript">
-        var new_item = instantiateCategory("<%=category['category_name']%>", <%=category['category_id']%>, <%=category['background_color']%>, <%=category['text_color']%>);
-        var nesting_level = <%=get_nesting_level(category['parent_id'])%>;
-        if (nesting_level) {
-            append_list.push({element: new_item, parent_id:"subcategories-<%=category['parent_id']%>"});
-        }
-        else {
-            append_list.push({element: new_item, parent_id:"categorylist-innercontainer"});
-        }
+        append_list.push({element: instantiateCategory("<%=category['category_name']%>", <%=category['category_id']%>, <%=category['background_color']%>, <%=category['text_color']%>), parent_id:"<%=category['parent_id']%>"});
     </script>
 <%end%>
 <script type="text/javascript">
     append_list.forEach(element => {
-        document.getElementById(element.parent_id).appendChild(element.element);
+        appendToParent(element.element, element.parent_id);
     });
 </script>
