@@ -364,11 +364,13 @@ class App < Sinatra::Base
             category_hash[id] = Hash.new
 
             [id, key, value]
-        }
-
-        category_array.each do |id, key, value|
+        }.map { |id, key, value|
           category_hash[id][key] = value
-        end
+        }
+        
+        category_hash = category_hash.select {|id, category| 
+        category['is_deleted'] == "false"
+        }
 
         p category_hash
 

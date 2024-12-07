@@ -12,7 +12,7 @@ collapse = (button, id) => {
 
 deleteCategory = (id) => {
     setDeleted = (category_element) =>  {
-        category_element.deleted = true;
+        category_element.querySelector(".is-deleted-input").value = true;
         
         const category = category_element.querySelector(".category-options");
         category.style.background = "red";
@@ -37,7 +37,7 @@ deleteCategory = (id) => {
 
 undoDeletion = (id) => {
     undo = (category_element) =>  {
-        category_element.deleted = false;
+        category_element.querySelector(".is-deleted-input").value = false;
         
         const category = category_element.querySelector(".category-options");
         category.style.background = "";
@@ -89,7 +89,7 @@ setParent = (id) => {
 };
 
 appendToParent = (element, parent_id) => {
-    element.querySelector(".parent_id_input").value = (parent_id == "categorylist-innercontainer") ? null : parent_id;
+    element.querySelector(".parent-id-input").value = (parent_id == "categorylist-innercontainer") ? null : parent_id;
     
     parent_element_id = (!parent_id) ? "categorylist-innercontainer" : "subcategories-" + parent_id;
 
@@ -102,7 +102,8 @@ instantiateCategory = (name, id, background_color, text_color) => {
     new_category.id = id;
 
     new_category.innerHTML = `
-        <input type="text" class="parent_id_input" name="${id}#parent_id" style="display:none;">
+        <input type="text" class="parent-id-input" name="${id}#parent_id" style="display:none;">
+        <input type="text" class="is-deleted-input" value="false" name="${id}#is_deleted" style="display:none;">
         <div class="category-options">
             <div class="categorylist-item-left">
                 <button class="collapse-button" type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
