@@ -63,7 +63,7 @@ nav *{
   bottom: 3%;
 }
 
-#delete-button {
+.delete-button {
   color: whitesmoke;
   background-color: rgb(255, 0, 0);
 }

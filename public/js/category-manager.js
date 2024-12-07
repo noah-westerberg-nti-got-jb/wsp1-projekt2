@@ -17,9 +17,12 @@ deleteCategory = (id) => {
         const category = category_element.children[0];
         category.style.background = "red";
         
-        disable = (element) => {element.disabled = true;};
-        Array.from(category.getElementsByTagName('input')).forEach((element) => disable(element));
-        Array.from(category.getElementsByTagName('button')).forEach((element) => disable(element));
+        Array.from(category.getElementsByTagName('input')).forEach((element) => {element.disabled = true;});
+        Array.from(category.getElementsByTagName('button')).forEach((element) => {
+            if (element.className != "collapse-button") {
+                element.style.display = "none";
+            }
+        });
 
         const subcategories = category_element.children[1]; 
         if (subcategories.children.length) {
@@ -27,7 +30,35 @@ deleteCategory = (id) => {
         }
     };
 
-    setDeleted(document.getElementById(id));
+    const category = document.getElementById(id);
+    setDeleted(category);
+    category.getElementsByClassName("undo-button")[0].style.display = "inline-block"
+};
+
+undoDeletion = (id) => {
+    undo = (category_element) =>  {
+        category_element.deleted = false;
+        
+        const category = category_element.children[0];
+        category.style.background = "";
+        
+        Array.from(category.getElementsByTagName('input')).forEach((element) => {element.disabled = false;});
+        Array.from(category.getElementsByTagName('button')).forEach((element) => {
+            if (element.className != "undo-button" && element.className != "set-parent-button") {
+                element.style.display = "inline-block";
+            }
+            else {
+                element.style.display = "none";
+            }
+        });
+
+        const subcategories = category_element.children[1]; 
+        if (subcategories.children.length) {
+           Array.from(subcategories.children).forEach((subcategory) => undo(subcategory));
+        }
+    };
+
+    undo(document.getElementById(id));
 };
 
 let child_to_append = null;
@@ -66,12 +97,13 @@ instantiateCategory = (name, id, background_color, text_color) => {
     new_category.innerHTML = `
         <div class="category-options">
             <div class="categorylist-item-left">
-                <button type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
+                <button class="collapse-button" type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
                 <span class="category-list-item-name"><input type="text" required value="${name}"></span>
                 <button type="button" class="set-parent-button" onclick="setParent('${id}')" style="display: none;">append</button>
                 <button type="button" onclick="changeParent('${id}')">change parent</button>
                 <button type="button" onclick="createCategory('${id}')">new child</button>
-                <button type="button" id="delete-button" onclick="deleteCategory('${id}')">delete</button>
+                <button type="button" class="delete-button" onclick="deleteCategory('${id}')">delete</button>
+                <button type="button" class="undo-button" onclick="undoDeletion('${id}')" style="display: none;">undo</button>
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
