@@ -104,6 +104,7 @@ instantiateCategory = (name, id, background_color, text_color) => {
     new_category.innerHTML = `
         <input type="text" class="parent-id-input" name="${id}#parent_id" style="display:none;">
         <input type="text" class="is-deleted-input" value="false" name="${id}#is_deleted" style="display:none;">
+        <input type="text" class="is-new-input" value="false" name="${id}#is_new" style="display:none;">
         <div class="category-options">
             <div class="categorylist-item-left">
                 <button class="collapse-button" type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
@@ -134,6 +135,6 @@ instantiateCategory = (name, id, background_color, text_color) => {
 let new_id_num = 0;
 createCategory = (parent_id) => {
     new_category = instantiateCategory("", "new" + new_id_num++, 0, 0);
-
     appendToParent(new_category, parent_id);
+    new_category.querySelector('.is-new-input').value = true;
 };

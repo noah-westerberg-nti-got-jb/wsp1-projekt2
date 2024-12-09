@@ -367,13 +367,39 @@ class App < Sinatra::Base
         }.map { |id, key, value|
           category_hash[id][key] = value
         }
-        
-        category_hash = category_hash.select {|id, category| 
-        category['is_deleted'] == "false"
+
+        category_hash.each do |id, values|
+            if values['is_deleted'] == "true" && values['is_new'] == "false"
+                db.execute('DELETE FROM categories WHERE category_id = ?', [id])
+            end
+        end
+
+        category_hash = category_hash.select {|id, values|
+            values['is_deleted'] == "false"
+        }
+        new_categories = category_hash.select{|id, values|
+            values['is_new'] == "true"
         }
 
-        p category_hash
+        # example:
+        #   new_id_list {"new0" => 4, "new1" => 7, ...}
+        new_id_list = Hash.new
+        new_categories.each do |id, values|
+            db.execute('INSERT INTO categories (user_id, category_name, background_color, text_color) VALUES (?, ?, ?, ?)', [session[:user_id], values['name'], 0, 0])
+            new_id_list[id] = db.execute('SELECT category_id FROM categories WHERE user_id = ? AND category_name = ?', [session[:user_id], values['name']]).first['category_id']
+        end
 
+        category_hash.each do |id, values| 
+            id = (id.include?("new")) ? new_id_list[id].to_i : id.to_i
+            parent_id = values['parent_id']
+            parent_id = (parent_id.include?("new")) ? new_id_list[parent_id] : parent_id
+            parent_id = (parent_id == "") ? nil : parent_id.to_i
+            name = values['name']
+            text_color = values['text-color'].split("#")[1].to_i(16)
+            background_color = values['background-color'].split("#")[1].to_i(16)
+
+            db.execute('UPDATE categories SET category_name = ?, parent_id = ?, text_color = ?, background_color = ? WHERE category_id = ?', [name, parent_id, text_color, background_color, id])
+        end
 
         redirect('/categories')
     end
