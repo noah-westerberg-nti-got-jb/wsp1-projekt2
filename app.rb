@@ -371,6 +371,8 @@ class App < Sinatra::Base
         category_hash.each do |id, values|
             if values['is_deleted'] == "true" && values['is_new'] == "false"
                 db.execute('DELETE FROM categories WHERE category_id = ?', [id])
+                default_category_id = db.execute('SELECT category_id FROM tasks WHERE user_id = ?', [session[:user_id]]).first['category_id']
+                db.execute('UPDATE tasks SET category_id = ? WHERE category_id = ?', [default_category_id, id])
             end
         end
 
