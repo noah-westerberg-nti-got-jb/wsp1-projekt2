@@ -1,3 +1,5 @@
+<script type="text/javascript" src="/js/convert-color.js?<%=Time.now.to_i%>"></script>
+
 <div id="options">
         <script type="text/javascript">
             let urlParams = new URLSearchParams(location.search);
@@ -46,7 +48,7 @@
 </div>
 <div id="list-container">
     <% @todo.each do | item | %>
-        <div class="todo-container">
+        <div class="todo-container" id="<%=item['id']%>">
             <h2><%=item['title']%> </h2>
             <span> <%=item['category_name']%> </span>
             <p><%=item['description']%> </p>
@@ -63,6 +65,15 @@
                 <%end%>
                 </button>
         </div>
+        <script type="text/javascript">
+            var container = document.getElementById(<%=item['id']%>);
+            
+            var text_color = intToRGB(<%=item['text_color']%>);
+            container.style.color = text_color;
+
+            var background_color = intToRGB(<%=item['background_color']%>);
+            container.style.background = background_color;
+        </script>
     <% end %>
 
     <script type="text/javascript"> 

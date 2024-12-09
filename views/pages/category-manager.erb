@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/js/convert-color.js?<%=Time.now.to_i%>"></script>
 <script type="text/javascript" src="/js/category-manager.js?<%=Time.now.to_i%>"></script>
 
 <form action="/update-categories" method="post">
@@ -15,7 +16,7 @@
 </script>
 <%@categories.each do | category |%>
     <script type="text/javascript">
-        append_list.push({element: instantiateCategory("<%=category['category_name']%>", <%=category['category_id']%>, <%=category['background_color']%>, <%=category['text_color']%>), parent_id:"<%=category['parent_id']%>"});
+        append_list.push({element: instantiateCategory("<%=category['category_name']%>", <%=category['category_id']%>, intToHexColor(<%=category['background_color']%>), intToHexColor(<%=category['text_color']%>)), parent_id:"<%=category['parent_id']%>"});
     </script>
 <%end%>
 <script type="text/javascript">
