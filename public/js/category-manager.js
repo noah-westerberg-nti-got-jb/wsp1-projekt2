@@ -32,7 +32,12 @@ deleteCategory = (id) => {
 
     const category = document.getElementById(id);
     setDeleted(category);
-    category.getElementsByClassName("undo-button")[0].style.display = "inline-block"
+    category.querySelector(".undo-button").style.display = "inline-block"
+    category.querySelector(".confirm-button").style.display = "inline-block"
+};
+
+confirmDeletion = (id) => {
+    document.getElementById(id).style.display = "none";
 };
 
 undoDeletion = (id) => {
@@ -44,7 +49,7 @@ undoDeletion = (id) => {
         
         Array.from(category.getElementsByTagName('input')).forEach((element) => {element.disabled = false;});
         Array.from(category.getElementsByTagName('button')).forEach((element) => {
-            if (element.className != "undo-button" && element.className != "set-parent-button") {
+            if (element.className != "undo-button" && element.className != "confirm-button" && element.className != "set-parent-button") {
                 element.style.display = "inline-block";
             }
             else {
@@ -114,6 +119,7 @@ instantiateCategory = (name, id, background_color, text_color) => {
                 <button type="button" onclick="createCategory('${id}')">new child</button>
                 <button type="button" class="delete-button" onclick="deleteCategory('${id}')">delete</button>
                 <button type="button" class="undo-button" onclick="undoDeletion('${id}')" style="display: none;">undo</button>
+                <button type="button" class="confirm-button" onclick="confirmDeletion('${id}')" style="display: none;">confirm</button>
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
