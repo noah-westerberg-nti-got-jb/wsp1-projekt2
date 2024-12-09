@@ -16,7 +16,7 @@
             <span id="category-list"><select id="category_selection" name="category" required>
                 <% @categories.each do | category |%>
                     <option
-                    <%if @item['category_id'] == category_id(category, @item['user_id'])%>
+                    <%if @item['category_id'] == category_id(category, @item['user_id'], {})%>
                         selected="selected"
                     <%end%>>
                     <%= category %></option>
@@ -24,6 +24,14 @@
             </select></span>
             <span id="new-category" style="display: none;">
                 <input type="text">
+                Text Color:<input type="color" name="text_color">
+                Background Color:<input type="color" name="background_color">
+                Parent: <select name="parent">
+                    <option selected>[none]</option>
+                    <%@categories.each do | category |%>
+                        <option><%=category%></option>
+                    <%end%>
+                </select>
             </span>
         </div>
         <div><span>Importance</span><input type="range" value="<%=@item['importance']%>" min="1" max="5" step="1" name="importance"></div>

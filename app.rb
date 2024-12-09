@@ -32,12 +32,12 @@ class App < Sinatra::Base
     end
 
     # returns category id if exists else creates new category and returns its id.
-	def category_id(category_name, user_id)
+	def category_id(category_name, user_id, new_category_options)
         category_id = db.execute('SELECT category_id FROM categories WHERE category_name = ? AND user_id = ?', [category_name, user_id])
         if category_id != []
             category_id = category_id.first['category_id']
         else
-            db.execute('INSERT INTO categories (category_name, user_id, background_color, text_color) VALUES (?,?, 0, 0)', [category_name, user_id])
+            db.execute('INSERT INTO categories (category_name, user_id, background_color, text_color, parent_id) VALUES (?,?, ?, ?, ?)', [category_name, user_id, new_category_options['background_color'], new_category_options['text_color'], new_category_options['parent_id']])
             category_id = db.execute('SELECT category_id FROM categories WHERE category_name = ? AND user_id = ?', [category_name, user_id]).first['category_id']
         end
 		return category_id
@@ -253,7 +253,11 @@ class App < Sinatra::Base
         end
 
         category = params[:category]
-		category_id = category_id(category, user_id)
+        text_color = params[:text_color].split("#")[1].to_i(16)
+        background_color = params[:background_color].split("#")[1].to_i(16)
+        parent_category = params[:parent]
+        parent_id = (parent_category == "[none]") ? nil : category_id(parent_category, user_id, {})
+		category_id = category_id(category, user_id, {"text_color" => text_color, "background_color" => background_color, "parent_id" => parent_id})
 
         importance = params[:importance]
         creation_date = DateTime.now.to_s.split('+')[0].sub!("T", " ")
@@ -288,7 +292,11 @@ class App < Sinatra::Base
         end
         
 		category = params[:category]
-		category_id = category_id(category, user_id)
+        text_color = params[:text_color].split("#")[1].to_i(16)
+        background_color = params[:background_color].split("#")[1].to_i(16)
+        parent_category = params[:parent]
+        parent_id = (parent_category == "[none]") ? nil : category_id(parent_category, user_id, {})
+		category_id = category_id(category, user_id, {"text_color" => text_color, "background_color" => background_color, "parent_id" => parent_id})
 
         importance = params[:importance]
 
