@@ -113,7 +113,7 @@ instantiateCategory = (name, id, background_color, text_color) => {
         <div class="category-options">
             <div class="categorylist-item-left">
                 <button class="collapse-button" type="button" onclick="collapse(this, '${id}')" collapsed="false">collapse</button>
-                <span class="category-list-item-name"><input type="text" name="${id}#name" required value="${name}"></span>
+                <span class="category-list-item-name"><label for="${id}#name" style="font-size: 0;">Category name</label><input type="text" name="${id}#name" id="${id}#name" required value="${name}"></span>
                 <button type="button" class="set-parent-button" onclick="setParent('${id}')" style="display: none;">append</button>
                 <button type="button" onclick="changeParent('${id}')">change parent</button>
                 <button type="button" onclick="createCategory('${id}')">new child</button>
@@ -123,10 +123,10 @@ instantiateCategory = (name, id, background_color, text_color) => {
             </div>
             <div class="categorylist-item-right">
                 <span class="text-color-area">
-                    Text-color: <input type="color" name="${id}#text-color" value=${text_color}>
+                    <label for="${id}#text-color">Text-color:</label> <input type="color" name="${id}#text-color" id="${id}#text-color" value=${text_color}>
                 </span>
                 <span class="background-color-area">
-                    Background-color: <input type="color" name="${id}#background-color" value=${background_color}>
+                    <label for="${id}#background-color">Background-color:</label> <input type="color" name="${id}#background-color" id="${id}#background-color" value=${background_color}>
                 </span>
             </div>
         </div>

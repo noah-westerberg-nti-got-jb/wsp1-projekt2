@@ -1,8 +1,8 @@
 <form action=<%="/edit/#{@item['id'].to_s}"%> method="post">
     <div id="creation-form">
-        <div><span>Title</span><input type="text" name="title" value="<%=@item['title']%>" required></div>
-        <div><span>Description</span><input type="text" name="description" value="<%=@item['description']%>"></div>
-        <div><span>Deadline</span>
+        <div><label for="title">Title</label><input type="text" name="title" id="title" value="<%=@item['title']%>" required></div>
+        <div><label for="description">Description</label><input type="text" name="description" id="description" value="<%=@item['description']%>"></div>
+        <div><label for="deadline-field">Deadline</label>
             <%if @item['deadline'] != nil%>
                 <input id="deadline-switch" type="checkbox" name="has_deadline" checked="true">
                 <input id="deadline-field" type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>" value="<%=DateTime.parse(@item['deadline']).to_s.split("+")[0]%>"></div>
@@ -11,7 +11,7 @@
                 <input id="deadline-field" type="datetime-local" name="deadline" min="<%= DateTime.now.to_s.split('T')[0] + "00:00"%>"></div>
             <%end%>
         <div>
-            <span>Category</span>
+            <label for="category_selection">Category</label>
             <button type="button" id="category-switch">+</button>
             <span id="category-list"><select id="category_selection" name="category" required>
                 <% @categories.each do | category |%>
@@ -24,9 +24,9 @@
             </select></span>
             <span id="new-category" style="display: none;">
                 <input type="text">
-                Text Color:<input type="color" name="text_color">
-                Background Color:<input type="color" name="background_color">
-                Parent: <select name="parent">
+                <label for="text_color">Text Color:</label><input type="color" name="text_color" id="text_color">
+                <label for="background_color">Background Color:</label><input type="color" name="background_color" id="background_color">
+                <label for="parent">Parent:</label> <select name="parent" id="parent">
                     <option selected>[none]</option>
                     <%@categories.each do | category |%>
                         <option><%=category%></option>
@@ -34,7 +34,7 @@
                 </select>
             </span>
         </div>
-        <div><span>Importance</span><input type="range" value="<%=@item['importance']%>" min="1" max="5" step="1" name="importance"></div>
+        <div><label for="importance">Importance</label><input type="range" value="<%=@item['importance']%>" min="1" max="5" step="1" name="importance" id="importance"></div>
         <div id="form-button-container">
         <button type="submit"> Confirm Change </button>
         <button type="button" class="delete-button" onclick=<%="location.href='/delete/#{@item['id']}'"%>>delete</button>

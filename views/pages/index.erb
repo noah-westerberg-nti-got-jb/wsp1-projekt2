@@ -20,12 +20,12 @@
             }
         </script>
 
-        <span>Show: <select id="show">
+        <span><label for="show">Show:</label> <select id="show">
             <option>Uncompleted</option>
             <option>All</option>
             <option>Completed</option>
         </select></span>
-        <span>Sort: <select id="sort-options">
+        <span><label for="sort-options">Sort:</label> <select id="sort-options">
             <option>Recent</option>
             <option>Old</option>
             <option>Deadline (Close - Far)</option>
@@ -33,7 +33,7 @@
             <option>Importance (High - Low)</option>
             <option>Importance (Low - High)</option>
         </select></span>
-        <span>Category: <select id="category-options">
+        <span><label for="category-options">Category:</label> <select id="category-options">
             <option selected="selected">All</option>
             <% @categories.each do | category |%>
                 <option><%= category %></option>
@@ -53,9 +53,8 @@
             <span> <%=item['category_name']%> </span>
             <p><%=item['description']%> </p>
             <%if item['deadline'] != nil%>
-            <p><%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
+                <p><%= time_difference(DateTime.parse(item['deadline']), DateTime.now)%> left </p>
             <%end%>
-            <button type="button" id="edit-item" onclick="location.href='/edit/<%=item['id']%>';">edit</button>
             <%is_completed = (item['completion_date'] == nil) ? 0 : 1%>
             <button type="button" id="complete-task" onclick="location.href='/complete/<%=item['id']%>/<%=is_completed%>';">
                 <%if is_completed == 1%>
@@ -63,7 +62,8 @@
                 <%else%>
                     Complete
                 <%end%>
-                </button>
+            </button>
+            <button type="button" id="edit-item" onclick="location.href='/edit/<%=item['id']%>';">edit</button>
         </div>
         <script type="text/javascript">
             var container = document.getElementById(<%=item['id']%>);
