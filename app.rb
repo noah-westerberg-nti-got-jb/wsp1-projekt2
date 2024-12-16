@@ -131,7 +131,8 @@ class App < Sinatra::Base
         user = db.execute('SELECT * FROM users WHERE username = ?', [input_username]).first;
 
         if user == nil
-          redirect('/login')
+            status 400
+            redirect('/login')
         end
 
         user_id = user['id'].to_i
@@ -161,7 +162,8 @@ class App < Sinatra::Base
         username = params[:username]
         password = BCrypt::Password.create(params[:password])
         if (db.execute('SELECT * FROM users WHERE username = ?', [username]) != [])
-          redirect('/create-account')
+            status 400
+            redirect('/create-account')
         end
         db.execute('INSERT INTO users (username, password) VALUES (?, ?)', [username, password])
         session[:user_id] = db.execute('SELECT id FROM users WHERE username = ?', [username]).first['id']
